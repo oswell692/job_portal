@@ -5,9 +5,17 @@ from datetime import datetime
 import os
 import bcrypt
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
+
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    # your options here
+}
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_OH2EnBqfYcu6@ep-summer-hall-a9y3xda5-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=prefer'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False

@@ -118,10 +118,13 @@
 
 {% block content %}
   <!-- Header with Background Image -->
-  <div class="header-banner">
-    <h1 style="font-size: 2.5rem; font-weight: 600;">Explore Job Opportunities</h1>
-    <p style="font-size: 1.2rem;">Find roles that match your skills and passion</p>
-  </div>
+<div class="header-banner">
+  <h1 style="font-size: 2.5rem; font-weight: 600;">
+    Explore Job Opportunities <span style="color: yellow;">ZedGig</span>
+  </h1>
+  <p style="font-size: 1.2rem;">Find roles that match your skills and passion</p>
+</div>
+
 
   <!-- Search -->
   <form class="search-bar d-flex" method="get" action="{{ url_for('home') }}">
