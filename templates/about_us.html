@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container my-5">
+  <div class="text-center mb-5">
+    <h1 class="fw-bold">About ZedGig</h1>
+    <p class="text-muted">Empowering connections between talent and opportunity in Zambia and beyond.</p>
+  </div>
+
+  <div class="row align-items-center mb-5">
+    <div class="col-md-6">
+      <img src="{{ url_for('static', filename='images/teamwork.png') }}" 
+           alt="ZedGig Team" class="img-fluid rounded-3 shadow">
+    </div>
+    <div class="col-md-6">
+      <h3 class="fw-semibold">Who We Are</h3>
+      <p>
+        ZedGig is a modern recruitment platform dedicated to bridging the gap between job seekers and employers.  
+        We believe in creating equal opportunities by making job posting and searching simple, fast, and transparent.
+      </p>
+    </div>
+  </div>
+
+  <div class="row align-items-center mb-5 flex-md-row-reverse">
+    <div class="col-md-6">
+      <img src="{{ url_for('static', filename='images/innovation.png
+      ') }}" 
+           alt="Innovation" class="img-fluid rounded-3 shadow">
+    </div>
+    <div class="col-md-6">
+      <h3 class="fw-semibold">Our Mission</h3>
+      <p>
+        Our mission is to empower individuals with access to career opportunities while enabling businesses to 
+        discover the best talent. We’re committed to making hiring in Zambia more efficient through technology and trust.
+      </p>
+    </div>
+  </div>
+
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm h-100 border-0 rounded-3">
+        <div class="card-body">
+          <h4 class="fw-bold">Trusted by Employers</h4>
+          <p class="text-muted">Dozens of companies rely on ZedGig to connect them with skilled professionals.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm h-100 border-0 rounded-3">
+        <div class="card-body">
+          <h4 class="fw-bold">For Job Seekers</h4>
+          <p class="text-muted">Thousands of job seekers use our platform to find their next big opportunity.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm h-100 border-0 rounded-3">
+        <div class="card-body">
+          <h4 class="fw-bold">Driven by Innovation</h4>
+          <p class="text-muted">We constantly innovate to simplify recruitment and maximize impact.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

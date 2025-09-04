@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+
+{% block title %}Job Opportunities - MyScape Hub{% endblock %}
+
+{% block extra_css %}
+  <!-- Page-specific CSS/resources -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+
+    /* Updated job-card CSS */
+    .job-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #fff8dc; /* pale yellow / cream */
+      border-radius: 8px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .job-card img.company-logo {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-right: 15px;
+      flex-shrink: 0;
+    }
+
+    .job-info {
+      flex-grow: 1;
+    }
+
+    .job-info h3 {
+      font-size: 1rem;
+      margin: 0;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .job-info small {
+      font-size: 0.8rem;
+      color: #555;
+    }
+
+    .job-meta {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #555;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .view-button {
+      margin-left: 15px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 25px;
+      width: 90%;
+      max-width: 900px;
+      border-radius: 8px;
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    ul {
+      margin-left: 20px;
+    }
+
+    .search-bar {
+      max-width: 500px;
+      margin: 0 auto 30px;
+    }
+
+    .header-banner {
+      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)),
+                  url('{{ url_for('static', filename='images/background.jpg') }}') no-repeat center center;
+      background-size: cover;
+      color: white;
+      padding: 100px 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <!-- Header with Background Image -->
+  <div class="header-banner">
+    <h1 style="font-size: 2.5rem; font-weight: 600;">Explore Job Opportunities</h1>
+    <p style="font-size: 1.2rem;">Find roles that match your skills and passion</p>
+  </div>
+
+  <!-- Search -->
+  <form class="search-bar d-flex" method="get" action="{{ url_for('home') }}">
+    <input type="text" class="form-control me-2" name="q" placeholder="Search job titles..." value="{{ search_query }}">
+    <button class="btn btn-warning" type="submit">Search</button>
+  </form>
+
+  <!-- Filters -->
+  <div class="d-flex flex-wrap justify-content-center mb-4 gap-2">
+    {% set job_types = ['Consultant', 'Contract', 'Freelance', 'Full Time', 'Internship', 'Part Time', 'Short-Term', 'Temporary', 'Volunteer'] %}
+    {% for type in job_types %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="job_type" value="{{ type }}" id="type{{ type|replace(' ','') }}" checked>
+        <label class="form-check-label" for="type{{ type|replace(' ','') }}">{{ type }}</label>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Job Listings -->
+  {% for job in jobs %}
+    <div class="job-card" data-job-type="{{ job.job_type }}" data-aos="fade-up" data-aos-duration="600">
+      <img src="{{ url_for('static', filename=job.logo_url if job.logo_url else 'uploads/default.png') }}" alt="{{ job.position }} logo" class="company-logo">
+      <div class="job-info">
+        <h3>{{ job.position }}</h3>
+        <small>{{ job.company_name if job.company_name else "Company Name" }}</small>
+      </div>
+      <div class="job-location text-center" style="flex-grow:1; font-size:0.8rem; color:#555;">
+        {{ job.location }}
+      </div>
+      <div class="job-meta text-end">
+        <div>{{ job.job_type }}</div>
+        <div id="countdown-{{ job.id }}" class="text-danger fw-semibold"></div>
+      </div>
+      <a href="{{ url_for('job_detail', job_id=job.id, source='public') }}" class="btn btn-dark view-button">View</a>
+    </div>
+  {% else %}
+    <p class="text-muted">No jobs available at this time.</p>
+  {% endfor %}
+
+  <!-- Job Detail Modals -->
+  {% for job in jobs %}
+    <div id="modal-{{ job.id }}" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeModal({{ job.id }})">&times;</span>
+        <h2>{{ job.title }}</h2>
+        <p><em>{{ job.company_name }}</em></p>
+        <p><strong>Job Opportunity:</strong> {{ job.position }}</p>
+        <p><strong>Location:</strong> {{ job.location }}</p>
+        <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+        <p><strong>Application Deadline:</strong> {{ job.deadline.strftime('%d %B, %Y') }}</p>
+        <p>{{ job.intro }}</p>
+        <h4 class="mt-4">Key Responsibilities</h4>
+        <ul>
+          {% for item in job.responsibilities.splitlines() if item.strip() %}
+            <li>{{ item.strip() }}</li>
+          {% endfor %}
+        </ul>
+        <h4>Ideal Candidate Profile</h4>
+        <ul>
+          {% for item in job.candidate_profile.splitlines() if item.strip() %}
+            <li>{{ item.strip() }}</li>
+          {% endfor %}
+        </ul>
+        <h4>Qualifications</h4>
+        <p>{{ job.qualifications }}</p>
+        <h4>What’s on Offer</h4>
+        <ul>
+          {% for item in job.whats_on_offer.splitlines() if item.strip() %}
+            <li>{{ item.strip() }}</li>
+          {% endfor %}
+        </ul>
+        <h4>Application Email</h4>
+        <p>{{job.application_email}}</p>
+        <h4>To Apply:</h4>
+        <p><a href="{{ job.apply_link }}" target="_blank">{{ job.apply_link }}</a></p>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+  <!-- Filters & Countdown scripts -->
+  <script>
+    const checkboxes = document.querySelectorAll('input[name="job_type"]');
+    const jobCards = document.querySelectorAll('.job-card');
+
+    function filterJobs() {
+      const selectedTypes = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      jobCards.forEach(card => {
+        card.style.display = selectedTypes.includes(card.dataset.jobType) ? '' : 'none';
+      });
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', filterJobs));
+    filterJobs();
+  </script>
+
+  <script>
+    {% for job in jobs %}
+      (function() {
+        const countdownElement = document.getElementById('countdown-{{ job.id }}');
+        const deadline = new Date("{{ job.deadline.strftime('%Y-%m-%dT23:59:59') }}").getTime();
+        function updateCountdown() {
+          const now = new Date().getTime();
+          const distance = deadline - now;
+          if (distance < 0) { countdownElement.innerHTML = "🚫 <span style='color: red;'>No longer receiving new applications</span>"; return; }
+          const days = Math.floor(distance / (1000*60*60*24));
+          const hours = Math.floor((distance % (1000*60*60*24))/(1000*60*60));
+          const minutes = Math.floor((distance % (1000*60*60))/(1000*60));
+          const seconds = Math.floor((distance % (1000*60))/1000);
+          countdownElement.innerHTML = `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s remaining`;
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+      })();
+    {% endfor %}
+  </script>
+
+  <!-- Modal Script -->
+  <script>
+    function openModal(id) { document.getElementById('modal-' + id).style.display = 'block'; }
+    function closeModal(id) { document.getElementById('modal-' + id).style.display = 'none'; }
+    window.onclick = function(event) {
+      document.querySelectorAll('.modal').forEach(modal => { if(event.target === modal) modal.style.display="none"; });
+    };
+  </script>
+
+  <!-- AOS -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+  <script>AOS.init();</script>
+{% endblock %}
+
+
+
+
