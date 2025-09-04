@@ -14,17 +14,13 @@ load_dotenv()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    # your options here
-}
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://neondb_owner:npg_OH2EnBqfYcu6@ep-summer-hall-a9y3xda5-pooler.gwc.azure.neon.tech/neondb?sslmode=require&channel_binding=prefer'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     "pool_pre_ping": True,   # Check if connection is alive before using it
     "pool_recycle": 300,     # Recycle connections every 5 minutes
     "pool_size": 5,          # Keep a small pool
     "max_overflow": 10       # Allow extra connections if needed
+    # your options here
 }
+
 
 
 UPLOAD_FOLDER = os.path.join('static', 'uploads')
